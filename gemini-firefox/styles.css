@@ -1,0 +1,309 @@
+/**
+ * Gemini Navigator - Optimized Styles
+ * Lightweight design without heavy performance-impacting effects
+ */
+
+/* ============================================
+   CSS Variables
+   ============================================ */
+:root {
+  --gemini-nav-bg: rgba(20, 20, 25, 0.95);
+  --gemini-nav-bg-hover: rgba(50, 50, 60, 0.95);
+  --gemini-nav-border: rgba(100, 100, 120, 0.4);
+  --gemini-nav-text: #f0f0f5;
+  --gemini-nav-text-dim: #9898a8;
+  --gemini-nav-accent: #8ab4f8;
+  --gemini-nav-user-color: #4fc3f7;
+  --gemini-nav-ai-color: #ab47bc;
+  --gemini-nav-highlight: rgba(138, 180, 248, 0.25);
+  --gemini-nav-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --gemini-nav-radius: 12px;
+}
+
+/* ============================================
+   Menu Container
+   ============================================ */
+#gemini-navigator-menu {
+  position: fixed;
+  right: 10px;
+  top: 100px;
+  z-index: 2147483647;
+  display: flex;
+  flex-direction: column;
+  min-width: 240px;
+  min-height: 200px;
+  max-width: 500px;
+  max-height: 70vh;
+  background: var(--gemini-nav-bg);
+  border: 1px solid var(--gemini-nav-border);
+  border-radius: var(--gemini-nav-radius);
+  box-shadow: var(--gemini-nav-shadow);
+  font-family: 'Google Sans', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  color: var(--gemini-nav-text);
+  overflow: hidden;
+}
+
+#gemini-navigator-menu.dragging {
+  opacity: 0.9;
+  cursor: move;
+}
+
+#gemini-navigator-menu.resizing {
+  opacity: 0.9;
+}
+
+/* Minimized floating icon state */
+#gemini-navigator-menu.minimized {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  background: linear-gradient(135deg, #8ab4f8 0%, #c58af9 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(138, 180, 248, 0.5);
+}
+
+#gemini-navigator-menu.minimized:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+#gemini-navigator-menu.minimized .gemini-nav-header {
+  padding: 0;
+  background: transparent;
+  border: none;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#gemini-navigator-menu.minimized .gemini-nav-controls {
+  margin: 0;
+}
+
+#gemini-navigator-menu.minimized .gemini-nav-btn {
+  width: 48px;
+  height: 48px;
+  font-size: 22px;
+  background: transparent;
+  color: white;
+  border-radius: 50%;
+}
+
+/* ============================================
+   Header
+   ============================================ */
+.gemini-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--gemini-nav-border);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.gemini-nav-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--gemini-nav-text);
+}
+
+.gemini-nav-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.gemini-nav-btn {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 8px;
+  color: var(--gemini-nav-text-dim);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.gemini-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--gemini-nav-text);
+}
+
+.gemini-nav-close:hover {
+  background: rgba(244, 67, 54, 0.25);
+  color: #ff6b6b;
+}
+
+/* ============================================
+   Content Area
+   ============================================ */
+.gemini-nav-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 0;
+}
+
+.gemini-nav-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.gemini-nav-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.gemini-nav-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.gemini-nav-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ============================================
+   Message List
+   ============================================ */
+.gemini-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gemini-nav-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  margin: 2px 0;
+}
+
+.gemini-nav-item:hover {
+  background: var(--gemini-nav-bg-hover);
+}
+
+.gemini-nav-user:hover {
+  border-left-color: var(--gemini-nav-user-color);
+}
+
+.gemini-nav-ai:hover {
+  border-left-color: var(--gemini-nav-ai-color);
+}
+
+/* Role indicators */
+.gemini-nav-role {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+.gemini-nav-role-user {
+  background: rgba(79, 195, 247, 0.2);
+  color: var(--gemini-nav-user-color);
+  border: 1px solid rgba(79, 195, 247, 0.3);
+}
+
+.gemini-nav-role-ai {
+  background: rgba(171, 71, 188, 0.2);
+  color: var(--gemini-nav-ai-color);
+  border: 1px solid rgba(171, 71, 188, 0.3);
+}
+
+.gemini-nav-text {
+  flex: 1;
+  color: var(--gemini-nav-text);
+  line-height: 1.45;
+  word-break: break-word;
+  font-size: 12.5px;
+}
+
+.gemini-nav-ai .gemini-nav-text {
+  color: var(--gemini-nav-text-dim);
+  font-style: italic;
+}
+
+/* ============================================
+   Resize Handle
+   ============================================ */
+.gemini-nav-resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 20px;
+  height: 20px;
+  cursor: se-resize;
+  opacity: 0.5;
+}
+
+.gemini-nav-resize-handle:hover {
+  opacity: 1;
+}
+
+.gemini-nav-resize-handle::before {
+  content: '';
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--gemini-nav-accent);
+  border-bottom: 2px solid var(--gemini-nav-accent);
+  border-radius: 0 0 3px 0;
+}
+
+/* ============================================
+   Highlight Effect
+   ============================================ */
+.gemini-nav-highlight {
+  background-color: var(--gemini-nav-highlight);
+  box-shadow: 0 0 0 4px var(--gemini-nav-highlight);
+  animation: gemini-nav-fade 2s ease-out;
+}
+
+@keyframes gemini-nav-fade {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+/* ============================================
+   Light Mode
+   ============================================ */
+@media (prefers-color-scheme: light) {
+  :root {
+    --gemini-nav-bg: rgba(255, 255, 255, 0.95);
+    --gemini-nav-bg-hover: rgba(240, 242, 245, 0.95);
+    --gemini-nav-border: rgba(200, 200, 210, 0.5);
+    --gemini-nav-text: #1a1a2e;
+    --gemini-nav-text-dim: #5f6368;
+    --gemini-nav-accent: #1a73e8;
+    --gemini-nav-user-color: #0288d1;
+    --gemini-nav-ai-color: #7b1fa2;
+    --gemini-nav-highlight: rgba(26, 115, 232, 0.2);
+    --gemini-nav-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  }
+}

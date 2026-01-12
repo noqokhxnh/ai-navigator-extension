@@ -19,10 +19,10 @@
     // ============================================
     const CONFIG = {
         // Minimum messages before showing menu
-        minMessages: 3,
+        minMessages: 1, // Reduced to 1 for debugging
 
         // Debounce delay for DOM updates (ms)
-        debounceDelay: 300,
+        debounceDelay: 500,
 
         // Default menu position
         defaultPosition: { x: 20, y: 100 },
@@ -32,34 +32,34 @@
 
         // CSS selectors to find user messages in Gemini
         userMessageSelectors: [
+            'user-query',
+            '[data-test-id="user-query"]',
             '[data-message-author-role="user"]',
             '.user-query',
             '.query-text',
             '.user-message',
             'message-content[data-role="user"]',
-            '.conversation-turn.user-turn',
-            '[class*="user"][class*="message"]',
-            '[class*="query"]'
+            '.conversation-turn.user-turn'
         ],
 
         // CSS selectors to find AI/model messages in Gemini
         aiMessageSelectors: [
+            'model-response',
+            '[data-test-id="model-response"]',
             '[data-message-author-role="model"]',
             '[data-message-author-role="assistant"]',
             '.model-response',
             '.assistant-message',
             'message-content[data-role="model"]',
-            '.conversation-turn.model-turn',
-            '[class*="model"][class*="response"]',
-            '[class*="response"]'
+            '.conversation-turn.model-turn'
         ],
 
         // Container for conversation
         conversationContainerSelectors: [
-            '.conversation-container',
-            '.chat-container',
             'main',
-            '[role="main"]'
+            '[role="main"]',
+            '.conversation-container',
+            '.chat-container'
         ]
     };
 
@@ -164,7 +164,9 @@
     }
 
     function updateMessages() {
+        // console.log('[Gemini Navigator] Scanning for messages...');
         const messageElements = findAllMessages();
+        // console.log(`[Gemini Navigator] Found ${messageElements.length} total raw messages`);
 
         currentQuestions = messageElements.map((msg, index) => ({
             element: msg.element,
@@ -172,6 +174,8 @@
             role: msg.role,
             index: index + 1
         })).filter(q => q.text.length > 0);
+
+        console.log(`[Gemini Navigator] Processed ${currentQuestions.length} valid messages for menu`);
 
         updateMenuUI();
     }

@@ -1,18 +1,18 @@
 {
   "manifest_version": 3,
   "name": "Gemini Navigator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Navigate through your Gemini AI conversations with ease",
   "permissions": [
     "storage"
   ],
   "host_permissions": [
-    "*://gemini.google.com/*"
+    "https://gemini.google.com/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "*://gemini.google.com/*"
+        "https://gemini.google.com/*"
       ],
       "js": [
         "content.js"

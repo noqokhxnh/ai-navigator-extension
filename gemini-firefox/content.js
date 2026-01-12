@@ -14,10 +14,10 @@
     // ============================================
     const CONFIG = {
         // Minimum messages before showing menu
-        minMessages: 3,
+        minMessages: 1, // Reduced to 1 for debugging
 
         // Debounce delay for DOM updates (ms)
-        debounceDelay: 300,
+        debounceDelay: 500,
 
         // Default menu position
         defaultPosition: { x: 20, y: 100 },
@@ -27,34 +27,34 @@
 
         // CSS selectors to find user messages in Gemini
         userMessageSelectors: [
+            'user-query',
+            '[data-test-id="user-query"]',
             '[data-message-author-role="user"]',
             '.user-query',
             '.query-text',
             '.user-message',
             'message-content[data-role="user"]',
-            '.conversation-turn.user-turn',
-            '[class*="user"][class*="message"]',
-            '[class*="query"]'
+            '.conversation-turn.user-turn'
         ],
 
         // CSS selectors to find AI/model messages in Gemini
         aiMessageSelectors: [
+            'model-response',
+            '[data-test-id="model-response"]',
             '[data-message-author-role="model"]',
             '[data-message-author-role="assistant"]',
             '.model-response',
             '.assistant-message',
             'message-content[data-role="model"]',
-            '.conversation-turn.model-turn',
-            '[class*="model"][class*="response"]',
-            '[class*="response"]'
+            '.conversation-turn.model-turn'
         ],
 
         // Container for conversation
         conversationContainerSelectors: [
-            '.conversation-container',
-            '.chat-container',
             'main',
-            '[role="main"]'
+            '[role="main"]',
+            '.conversation-container',
+            '.chat-container'
         ]
     };
 
@@ -159,7 +159,9 @@
     }
 
     function updateMessages() {
+        // console.log('[Gemini Navigator] Scanning for messages...');
         const messageElements = findAllMessages();
+        // console.log(`[Gemini Navigator] Found ${messageElements.length} total raw messages`);
 
         currentQuestions = messageElements.map((msg, index) => ({
             element: msg.element,
@@ -167,6 +169,8 @@
             role: msg.role,
             index: index + 1
         })).filter(q => q.text.length > 0);
+
+        console.log(`[Gemini Navigator] Processed ${currentQuestions.length} valid messages for menu`);
 
         updateMenuUI();
     }
@@ -183,24 +187,52 @@
         // Create menu container
         menuElement = document.createElement('div');
         menuElement.id = 'gemini-navigator-menu';
-        menuElement.innerHTML = `
-      <div class="gemini-nav-header">
-        <span class="gemini-nav-title">📍 Navigator</span>
-        <div class="gemini-nav-controls">
-          <button class="gemini-nav-btn gemini-nav-minimize" title="Minimize">−</button>
-          <button class="gemini-nav-btn gemini-nav-close" title="Close">×</button>
-        </div>
-      </div>
-      <div class="gemini-nav-content">
-        <ul class="gemini-nav-list"></ul>
-      </div>
-      <div class="gemini-nav-resize-handle"></div>
-    `;
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'gemini-nav-header';
+
+        const title = document.createElement('span');
+        title.className = 'gemini-nav-title';
+        title.textContent = '📍 Navigator';
+
+        const controls = document.createElement('div');
+        controls.className = 'gemini-nav-controls';
+
+        const minimizeBtn = document.createElement('button');
+        minimizeBtn.className = 'gemini-nav-btn gemini-nav-minimize';
+        minimizeBtn.title = 'Minimize';
+        minimizeBtn.textContent = '−';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'gemini-nav-btn gemini-nav-close';
+        closeBtn.title = 'Close';
+        closeBtn.textContent = '×';
+
+        controls.appendChild(minimizeBtn);
+        controls.appendChild(closeBtn);
+
+        header.appendChild(title);
+        header.appendChild(controls);
+
+        // Content
+        const content = document.createElement('div');
+        content.className = 'gemini-nav-content';
+
+        menuListElement = document.createElement('ul');
+        menuListElement.className = 'gemini-nav-list';
+        content.appendChild(menuListElement);
+
+        // Resize handle
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'gemini-nav-resize-handle';
+
+        // Assemble
+        menuElement.appendChild(header);
+        menuElement.appendChild(content);
+        menuElement.appendChild(resizeHandle);
 
         document.body.appendChild(menuElement);
-
-        // Get references
-        menuListElement = menuElement.querySelector('.gemini-nav-list');
 
         // Setup event listeners
         setupMenuEvents();
@@ -298,20 +330,32 @@
 
         menuElement.style.display = 'flex';
 
-        // Update list with role indicators
-        menuListElement.innerHTML = currentQuestions.map(q => `
-      <li class="gemini-nav-item gemini-nav-${q.role}" data-index="${q.index - 1}">
-        <span class="gemini-nav-role gemini-nav-role-${q.role}">${q.role === 'user' ? 'U' : 'A'}</span>
-        <span class="gemini-nav-text">${escapeHtml(q.text)}</span>
-      </li>
-    `).join('');
+        // Clear existing list
+        menuListElement.innerHTML = '';
 
-        // Add click handlers
-        menuListElement.querySelectorAll('.gemini-nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const index = parseInt(item.dataset.index);
+        // Update list with role indicators
+        currentQuestions.forEach(q => {
+            const li = document.createElement('li');
+            li.className = `gemini-nav-item gemini-nav-${q.role}`;
+            li.dataset.index = (q.index - 1).toString();
+
+            const roleSpan = document.createElement('span');
+            roleSpan.className = `gemini-nav-role gemini-nav-role-${q.role}`;
+            roleSpan.textContent = q.role === 'user' ? 'U' : 'A';
+
+            const textSpan = document.createElement('span');
+            textSpan.className = 'gemini-nav-text';
+            textSpan.textContent = q.text;
+
+            li.appendChild(roleSpan);
+            li.appendChild(textSpan);
+
+            li.addEventListener('click', () => {
+                const index = parseInt(li.dataset.index);
                 scrollToQuestion(index);
             });
+
+            menuListElement.appendChild(li);
         });
     }
 
@@ -416,15 +460,6 @@
                 setTimeout(updateMessages, 500);
             }
         }, 1000);
-    }
-
-    // ============================================
-    // Utilities
-    // ============================================
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
 
     // ============================================
